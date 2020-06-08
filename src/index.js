@@ -1,11 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-// import './style.scss';
-// import './like_button.js';
-// import './localstorage.js';
 
+// URL of the primary application
 const url = "http://10.25.138.115:8080/";
 
+// If the data is already in local storage retrieve it and parse it
+// Otherwise create an empty array to be set later
 if(localStorage.getItem('countries'))
 {
   var countries = JSON.parse(localStorage.getItem('countries'));
@@ -18,6 +18,7 @@ class CountryForm extends React.Component {
   constructor(props) {
     super(props);   
 
+    // Set empty variables in state to be set later
     this.state = {
       value: "none",
       cData: [],
@@ -30,15 +31,20 @@ class CountryForm extends React.Component {
     this.handleChange = this.handleChange.bind(this);
   } 
 
+  // This method happens before anything else, and will fetch the countries from the primary
+  // application and set the information to local storage.
   componentDidMount() {
     fetch(url + "countries")
     .then(res => res.json())
     .then(res => localStorage.setItem('countries',JSON.stringify(res)));
   }  
 
+  // This method gets the value from the select option and makes a fetch
+  // to the API using the relevant country name. The resulting data is used to 
+  // find the CPW, IPP and LEY data and set it to a state. This method
+  // is called whenever the select element is changed.
   async handleChange(event) {
     await this.setState({value: event.target.value});
-    await this.setState({slider: document.getElementById("slider").value});
 
     if(this.state.value!="none"){
       const response = await fetch(url + "countries/" + this.state.value);
@@ -57,6 +63,8 @@ class CountryForm extends React.Component {
 
   render() {
 
+  // countryOptions contains the list of country names as options. 
+  //It is used to populate the drop down list
   var countryOptions = countries.map((data) => <option value={data.name}>{data.name}</option>);
 
   return (
@@ -94,6 +102,7 @@ class CountryForm extends React.Component {
   }
 }
 
+// Render the above inside of a div with an ID of "country"
 ReactDOM.render(
   <CountryForm />,
   document.querySelector('#country')
