@@ -2,86 +2,99 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 // import './style.scss';
 // import './like_button.js';
-import './localstorage.js';
+// import './localstorage.js';
 
-const title = 'My Minimal React Webpack Babel Setup';
+const url = "http://10.25.138.115:8080/";
 
 if(localStorage.getItem('countries'))
 {
-    var countries = JSON.parse(localStorage.getItem('countries'));
+  var countries = JSON.parse(localStorage.getItem('countries'));
+}else
+{
+  var countries = [];
 }
 
 class CountryForm extends React.Component {
-    constructor(props) {
-      super(props);
-      this.state = {value: 'Afghanistan'};
-  
-      this.handleChange = this.handleChange.bind(this);
-      this.handleSubmit = this.handleSubmit.bind(this);
+  constructor(props) {
+    super(props);   
+
+    this.state = {
+      value: "none",
+      cData: [],
+      cpw: "",
+      ipp: "",
+      ley: ""
     }
-  
-    handleChange(event) {
-      this.setState({value: event.target.value});
-    }
-  
-    handleSubmit(event) {
-      alert('Your favorite flavor is: ' + this.state.value);
-      event.preventDefault();
-    }
-  
-    render() {
 
-        let countryOptions = countries.map((data) => <option>{data.name}</option>);
+    this.componentDidMount = this.componentDidMount.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+  } 
 
-        let dataOptions = countries.map((data) => <option>{data.data.cpw}</option>);
+  componentDidMount() {
+    fetch(url + "countries")
+    .then(res => res.json())
+    .then(res => localStorage.setItem('countries',JSON.stringify(res)));
+  }  
 
-        let ipp = [countries.map((data) => data.name), countries.map((data) => data.data)];
+  async handleChange(event) {
+    await this.setState({value: event.target.value});
+    await this.setState({slider: document.getElementById("slider").value});
 
-        // console.log(countryOptions);        
-        // console.log({dataOptions});
-        console.log(ipp);
+    if(this.state.value!="none"){
+      const response = await fetch(url + "countries/" + this.state.value);
+      const json = await response.json();      
 
-      return (
-        <form onSubmit={this.handleSubmit}>
+      if(json.data.cpw){await this.setState({cpw: json.data.cpw[2020]});}
+      else if(!json.data.cpw||json.data.cpw==""){this.setState({cpw: "No Data"});}      
 
-        <p>
-          <label>
-            Country:
-            <select value={this.state.value} onChange={this.handleChange}>
-                {countryOptions}
-            </select>
-          </label>
-        </p>
+      if(json.data.ipp){await this.setState({ipp: json.data.ipp[2020]});}
+      else if(!json.data.ipp||json.data.ipp==""){this.setState({ipp: "No Data"});}
 
-        <p>
-          <label>
-            Children Per Woman:
-            <p id="cpw"></p>
-          </label>            
-        </p>
-
-        <p>
-          <label>
-            Income Per Person:
-            <p id="ipp"></p>
-          </label>            
-        </p>
-
-        <p>
-          <label>
-            Life Expectency (Years):
-            <p id="ley"></p>
-          </label>            
-        </p>
-
-        </form>
-      );
+      if(json.data.ley){await this.setState({ley: json.data.ley[2020]});}
+      else if(!json.data.ley||json.data.ley==""){this.setState({ley: "No Data"});}
     }
   }
 
-  ReactDOM.render(
-    <CountryForm />,
-    document.querySelector('#country')
-  );
+  render() {
 
-//   console.log(document.getElementById('country'));
+  var countryOptions = countries.map((data) => <option value={data.name}>{data.name}</option>);
+
+  return (
+    
+    <div>
+    <p>
+      <label>
+        Country:
+        <select value={this.state.value} onChange={this.handleChange}>
+            <option value="none">Select a country...</option>
+            {countryOptions}
+        </select>
+      </label>
+    </p>
+
+    <p>
+      <label>
+        Children Per Woman: {this.state.cpw}
+      </label>            
+    </p>
+
+    <p>
+      <label>
+        Income Per Person: {this.state.ipp}
+      </label>            
+    </p>
+
+    <p>
+      <label>
+        Life Expectency (Years): {this.state.ley}
+      </label>            
+    </p>
+  </div>
+   );
+  }
+}
+
+ReactDOM.render(
+  <CountryForm />,
+  document.querySelector('#country')
+);
