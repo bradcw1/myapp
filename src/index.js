@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 
 // URL of the primary application
 const url = "http://10.25.138.115:8080/";
+const year = 2020;
 
 // If the data is already in local storage retrieve it and parse it
 // Otherwise create an empty array to be set later
@@ -30,6 +31,7 @@ class CountryForm extends React.Component {
     this.componentDidMount = this.componentDidMount.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
+    this.handlePost = this.handlePost.bind(this);
   } 
 
   // This method happens before anything else, and will fetch the countries from the primary
@@ -53,6 +55,24 @@ class CountryForm extends React.Component {
 
   }
 
+  handlePost() {
+    var new_value = document.getElementById("new_value").value;
+
+    if(!new_value){
+      alert("Please input a number");
+    }
+    else{
+      try{
+        fetch(url + "countries/" + this.state.value + "/ipp/" + year + "/" + new_value, {method: 'POST'})
+        .then(this.setState({ipp: new_value}));
+      }
+      catch
+      {
+        console.log("Country Not Found")
+      }
+    }    
+  }
+
   // This method gets the value from the select option and makes a fetch
   // to the API using the relevant country name. The resulting data is used to 
   // find the CPW, IPP and LEY data and set it to a state. This method
@@ -64,26 +84,18 @@ class CountryForm extends React.Component {
       const response = await fetch(url + "countries/" + this.state.value);
       const json = await response.json();   
 
-      var year = 2020;
+      
 
       console.log(json);
 
-      // if(json.data.cpw){await this.setState({cpw: json.data.cpw[year]});}
-      // else if(!json.data.cpw){this.setState({cpw: "No Data"});}      
-
-      // if(json.data.ipp){await this.setState({ipp: json.data.ipp[year]});}
-      // else if(!json.data.ipp){this.setState({ipp: "No Data"});}
-
-      // console.log(json.data.ipp[year]);
-
-      if(!json.data.cpw || json.data.cpw[year] === ""){this.setState({cpw: "No Data"});}
-      else{await this.setState({cpw: json.data.cpw[year]});}
+      // if(!json.data.cpw || json.data.cpw[year] === ""){this.setState({cpw: "No Data"});}
+      // else{await this.setState({cpw: json.data.cpw[year]});}
 
       if(!json.data.ipp || json.data.ipp[year] === ""){this.setState({ipp: "No Data"});}
       else{await this.setState({ipp: json.data.ipp[year]});}
 
-      if(!json.data.ley || json.data.ley[year] === ""){this.setState({ley: "No Data"});}
-      else{await this.setState({ley: json.data.ley[year]});}
+      // if(!json.data.ley || json.data.ley[year] === ""){this.setState({ley: "No Data"});}
+      // else{await this.setState({ley: json.data.ley[year]});}
     }
   }
 
@@ -110,23 +122,27 @@ class CountryForm extends React.Component {
       </label>
     </p>
 
-    <p>
+    {/* <p>
       <label>
         Children Per Woman: {this.state.cpw}
       </label>            
-    </p>
+    </p> */}
 
     <p>
       <label>
         Income Per Person: {this.state.ipp}
-      </label>            
+      </label> 
+      <p>
+      <input type="number" id="new_value"></input>
+      <button onClick={this.handlePost} id="post">Update</button>
+      </p>        
     </p>
 
-    <p>
+    {/* <p>
       <label>
         Life Expectency (Years): {this.state.ley}
       </label>            
-    </p>
+    </p> */}
   </div>
    );
   }
