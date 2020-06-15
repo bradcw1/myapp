@@ -34,8 +34,8 @@ module.exports = {
 	plugins: [new UglifyJSPlugin()],
 	entry: {
 		index: './src/index.js',
-		// style: './src/style.scss',
-		// localstorage: './src/localstorage.js'
+		style: './src/style.scss',
+		localstorage: './src/localstorage.js'
 	       },
 	output: {
 		filename: '[name].js',

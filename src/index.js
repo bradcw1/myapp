@@ -1,6 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+import '/home/student/myapp/src/style.scss'
+
 // URL of the primary application
 const url = "http://10.25.138.115:8080/";
 const year = 2020;
@@ -44,17 +46,24 @@ class CountryForm extends React.Component {
     .then(res => localStorage.setItem('countries',JSON.stringify(res)));
   }  
 
+  // When the "Delete Country" button is clicked it will send a delete api request
+  // to the primary application. The country will then be deleted from the database, unless the country
+  // can't be found.
   handleDelete() {
     try {
-      fetch(url + "countries/" + this.state.value, {method: 'DELETE'});
-      console.log("Deleted " + this.state.value);
+      fetch(url + "countries/" + this.state.value, {method: 'DELETE'})
+      .then(function(response) {console.log(response.status)});
+      // console.log("Deleted " + this.state.value);
     }
     catch {
       console.log("Country Not Found")
     }    
-
   }
 
+  // When the "Update Country" button is clicked it will send a post api request 
+  // to the primary application. The data will be updated in the database. I've used
+  // a slightly hacky way to immediately show the change in this application by updating the state.
+  // resulting get requests will grab the real data from the database though.
   handlePost() {
     var new_value = document.getElementById("new_value").value;
 
@@ -84,18 +93,8 @@ class CountryForm extends React.Component {
       const response = await fetch(url + "countries/" + this.state.value);
       const json = await response.json();   
 
-      
-
-      console.log(json);
-
-      // if(!json.data.cpw || json.data.cpw[year] === ""){this.setState({cpw: "No Data"});}
-      // else{await this.setState({cpw: json.data.cpw[year]});}
-
       if(!json.data.ipp || json.data.ipp[year] === ""){this.setState({ipp: "No Data"});}
       else{await this.setState({ipp: json.data.ipp[year]});}
-
-      // if(!json.data.ley || json.data.ley[year] === ""){this.setState({ley: "No Data"});}
-      // else{await this.setState({ley: json.data.ley[year]});}
     }
   }
 
@@ -107,43 +106,47 @@ class CountryForm extends React.Component {
   countries.sort((a, b) => (a.name > b.name) ? 1 : -1);
   var countryOptions = countries.map((data) => <option value={data.name}>{data.name}</option>);
 
-  return (
+  return (    
     
-    <div>
-    <p>
-      <label>
-        Country:
-        <select value={this.state.value} onChange={this.handleChange}>
-            <option value="none">Select a country...</option>
-            {countryOptions}
+    <div id="content" class="container">
+      <h1 id="title">Node App</h1>
+
+    <div  class="row">
+      <div class="col-md-8">
+        <label>Country: {this.state.value}</label>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-8">
+        <label>Income Per Person: {this.state.ipp}</label>
+      </div>
+    </div> 
+
+    <div class="row">
+      <div class="col-md-8">
+        <select value={this.state.value} onChange={this.handleChange} class="form-control">
+          <option value="none">Select..</option>
+          {countryOptions}
         </select>
+      </div>
 
-        <button id="delete" onClick={this.handleDelete}>Delete Country</button>
-      </label>
-    </p>
+      <div class="col-md-4">
+        <button id="delete" class="btn btn-primary" onClick={this.handleDelete}>Delete Country</button>
+      </div>
+    </div>
+      
+    <div class="row">
+      <div class="col-md-8">
+          <input type="number" id="new_value" class="form-control"></input>        
+        </div>
 
-    {/* <p>
-      <label>
-        Children Per Woman: {this.state.cpw}
-      </label>            
-    </p> */}
+        <div class="col-md-4">
+          <button onClick={this.handlePost} id="post" class="btn btn-primary">Update Data</button> 
+        </div>
+      </div>
+    </div>
 
-    <p>
-      <label>
-        Income Per Person: {this.state.ipp}
-      </label> 
-      <p>
-      <input type="number" id="new_value"></input>
-      <button onClick={this.handlePost} id="post">Update</button>
-      </p>        
-    </p>
-
-    {/* <p>
-      <label>
-        Life Expectency (Years): {this.state.ley}
-      </label>            
-    </p> */}
-  </div>
    );
   }
 }
