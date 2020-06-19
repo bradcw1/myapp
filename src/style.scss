@@ -1,9 +1,10 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600&family=Source+Sans+Pro:wght@400;600&display=swap');
 
-$font: 'Montserrat', sans-serif;
-$primary-color: #7A6AC0;
-$secondary-color: #4366A0;
-$font-color: white;
+$font1: 'Montserrat', sans-serif;
+$font2: 'Source Sans Pro', sans-serif;
+$primary-color: rgb(33, 90, 112);
+$secondary-color: #427747;
+$font-color: rgb(0, 0, 0);
 
 div{
     padding: 10px;
@@ -18,20 +19,19 @@ div#content{
     float: left;
 }
 
-h1 {
-    font-family: $font;
+label {
+    font-family: $font1;
     font-weight: normal;
-    color: $font-color;    
 }
 
-label {
-    font-family: $font;    
+h1 {
+    font-family: $font1;
     font-weight: normal;
-    font-size: 20px;
     color: $font-color;    
 }
 
 button.btn-primary,#delete,#post{
     background-color: $secondary-color !important;
     border-color: white;
+    color: $font-color;
 }

@@ -43,6 +43,7 @@ module.exports = {
 	},
 	mode: 'production',
 	watchOptions: {
+		aggregateTimeout: 200,
 		ignored: /node_modules/,
 		poll: 1000
 	}

@@ -39,8 +39,6 @@ class CountryForm extends React.Component {
   // This method happens before anything else, and will fetch the countries from the primary
   // application and set the information to local storage.
   componentDidMount() {
-    localStorage.clear();
-
     fetch(url + "countries")
     .then(res => res.json())
     .then(res => localStorage.setItem('countries',JSON.stringify(res)));
@@ -53,17 +51,16 @@ class CountryForm extends React.Component {
     try {
       fetch(url + "countries/" + this.state.value, {method: 'DELETE'})
       .then(function(response) {console.log(response.status)});
-      // console.log("Deleted " + this.state.value);
     }
     catch {
       console.log("Country Not Found")
-    }    
+    } 
   }
 
   // When the "Update Country" button is clicked it will send a post api request 
   // to the primary application. The data will be updated in the database. I've used
   // a slightly hacky way to immediately show the change in this application by updating the state.
-  // resulting get requests will grab the real data from the database though.
+  // Get requests will grab the real data from the database though.
   handlePost() {
     var new_value = document.getElementById("new_value").value;
 
@@ -105,7 +102,7 @@ class CountryForm extends React.Component {
 
   countries.sort((a, b) => (a.name > b.name) ? 1 : -1);
   var countryOptions = countries.map((data) => <option value={data.name}>{data.name}</option>);
-
+  
   return (    
     
     <div id="content" class="container">
